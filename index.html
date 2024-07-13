@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://js.lahza.io"></script>
+  <script>
+    Lahza.initialize({
+      apiKey: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM'
+    });
+
+    function handlePayment() {
+      Lahza.createPayment({
+        amount: 1000,
+        currency: 'USD'
+      }, function(response) {
+        if (response.success) {
+          console.log('Payment successful:', response);
+        } else {
+          console.error('Payment failed:', response.error);
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+  <button id="payButton" onclick="handlePayment()">Pay Now</button>
+</body>
+</html>
