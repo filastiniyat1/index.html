@@ -83,24 +83,6 @@
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
 
-        // Send data to Google Form
-        const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdteC9tIOLelzwJcHfA6u_f-TA46FjHyhR2C0JkIVLGpz0TxQ/formResponse";
-        const data = {
-          "entry.375134448": document.getElementById('name').value,
-          "entry.1206714017": document.getElementById('email').value,
-          "entry.1909668310": document.getElementById('amount').value,
-          "entry.477402436": document.getElementById('country').value
-        };
-
-        const params = new URLSearchParams(data).toString();
-
-        fetch(formUrl + "?" + params, {
-          method: 'POST',
-          mode: 'no-cors'
-        }).catch(function(error) {
-          console.error('Error:', error);
-        });
-
         const lahza = new LahzaPopup();
         lahza.newTransaction({
           key: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM',  // Replace with your actual test API key
@@ -109,6 +91,24 @@
           currency: 'USD',
           onSuccess: function(transaction) {
             alert('Payment complete: ' + transaction.reference);
+
+            // Send data to Google Form only after successful payment
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdteC9tIOLelzwJcHfA6u_f-TA46FjHyhR2C0JkIVLGpz0TxQ/formResponse";
+            const data = {
+              "entry.375134448": document.getElementById('name').value,
+              "entry.1206714017": document.getElementById('email').value,
+              "entry.1909668310": document.getElementById('amount').value,
+              "entry.477402436": document.getElementById('country').value
+            };
+
+            const params = new URLSearchParams(data).toString();
+
+            fetch(formUrl + "?" + params, {
+              method: 'POST',
+              mode: 'no-cors'
+            }).catch(function(error) {
+              console.error('Error:', error);
+            });
           },
           onCancel: function() {
             alert('Payment cancelled.');
