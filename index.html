@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background-color: transparent;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,7 +16,7 @@
       margin: 0;
     }
     .form-container {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.8);
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -27,7 +27,7 @@
     .form-group label {
       display: block;
       margin-bottom: 5px;
-      font-weight: bold;
+      font-weight: bold.
     }
     .form-group input, .form-group select {
       width: 100%;
@@ -36,7 +36,7 @@
       border-radius: 4px;
     }
     .form-submit {
-      text-align: center;
+      text-align: center.
     }
     .form-submit button {
       background-color: #007BFF;
@@ -45,10 +45,10 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 16px.
     }
     .form-submit button:hover {
-      background-color: #0056b3;
+      background-color: #0056b3.
     }
   </style>
 </head>
@@ -69,14 +69,7 @@
       </div>
       <div class="form-group">
         <label for="country">Country:</label>
-        <select id="country" required>
-          <option value="">Select Country</option>
-          <option value="USA">USA</option>
-          <option value="Canada">Canada</option>
-          <option value="UK">UK</option>
-          <option value="Australia">Australia</option>
-          <!-- Add more options as needed -->
-        </select>
+        <input type="text" id="country" required placeholder="Country">
       </div>
       <div class="form-submit">
         <button type="submit">Donate</button>
@@ -89,6 +82,27 @@
       const paymentForm = document.getElementById('payment-form');
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
+
+        // Send data to Google Form
+        const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd6-wU7HWfPJ2QGaDCrucuqA74lbtMjZJdp63UJLh0ueGEabg";
+        const data = {
+          "entry.980593014": document.getElementById('name').value,
+          "entry.1325457062": document.getElementById('email').value,
+          "entry.478961377": document.getElementById('amount').value,
+          "entry.544383846": document.getElementById('country').value
+        };
+
+        const params = new URLSearchParams(data).toString();
+
+        fetch(formUrl + "?" + params, {
+          method: 'POST',
+          mode: 'no-cors'
+        }).then(function() {
+          alert('Thank you for your donation!');
+        }).catch(function(error) {
+          console.error('Error:', error);
+        });
+
         const lahza = new LahzaPopup();
         lahza.newTransaction({
           key: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM',  // Replace with your actual test API key
