@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Integration</title>
+  <title>Donation Form</title>
   <script src="https://js.lahza.io/inline.min.js"></script>
   <style>
     body {
@@ -29,7 +29,7 @@
       margin-bottom: 5px;
       font-weight: bold;
     }
-    .form-group input {
+    .form-group input, .form-group select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -39,7 +39,7 @@
       text-align: center;
     }
     .form-submit button {
-      background-color: #4CAF50;
+      background-color: #007BFF;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -48,7 +48,7 @@
       font-size: 16px;
     }
     .form-submit button:hover {
-      background-color: #45a049;
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -56,15 +56,30 @@
   <div class="form-container">
     <form id="payment-form">
       <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required placeholder="Name">
+      </div>
+      <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" required placeholder="Email">
       </div>
       <div class="form-group">
-        <label for="amount">Amount:</label>
+        <label for="amount">Donation Amount:</label>
         <input type="number" id="amount" required placeholder="Amount">
       </div>
+      <div class="form-group">
+        <label for="country">Country:</label>
+        <select id="country" required>
+          <option value="">Select Country</option>
+          <option value="USA">USA</option>
+          <option value="Canada">Canada</option>
+          <option value="UK">UK</option>
+          <option value="Australia">Australia</option>
+          <!-- Add more options as needed -->
+        </select>
+      </div>
       <div class="form-submit">
-        <button type="submit">Pay Now</button>
+        <button type="submit">Donate</button>
       </div>
     </form>
   </div>
@@ -84,7 +99,7 @@
             alert('Payment complete: ' + transaction.reference);
           },
           onCancel: function() {
-            alert('Payment cancelled');
+            alert('Payment cancelled.');
           }
         });
       });
