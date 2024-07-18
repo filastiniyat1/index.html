@@ -27,7 +27,6 @@
     }
     .form-group {
       margin-bottom: 15px;
-      position: relative;
     }
     .form-group label {
       display: block;
@@ -101,7 +100,7 @@
       margin-bottom: 10px;
     }
     #country-options {
-      display: block;
+      display: none;
       position: absolute;
       z-index: 1;
       background-color: white;
@@ -180,6 +179,7 @@
             option.style.display = 'none';
           }
         });
+        countryOptions.style.display = 'block';
       });
 
       countryOptions.addEventListener('click', function(event) {
@@ -188,10 +188,6 @@
           countryInput.value = event.target.getAttribute('data-value');
           countryOptions.style.display = 'none';
         }
-      });
-
-      countrySearch.addEventListener('focus', function() {
-        countryOptions.style.display = 'block';
       });
 
       document.addEventListener('click', function(event) {
