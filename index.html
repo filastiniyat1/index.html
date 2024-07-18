@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Donation Form</title>
   <script src="https://js.lahza.io/inline.min.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js?render=6LfS9hIqAAAAAMAXSRgstbAocF-tnTRxCkYjftzu"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,6 +72,7 @@
         <label for="country">Country:</label>
         <input type="text" id="country" required placeholder="Country">
       </div>
+      <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ"></div>
       <div class="form-submit">
         <button type="submit">Donate</button>
       </div>
@@ -79,46 +80,25 @@
   </div>
 
   <script>
-    grecaptcha.ready(function() {
-      document.getElementById('payment-form').addEventListener('submit', function(e) {
+    document.addEventListener("DOMContentLoaded", function() {
+      const paymentForm = document.getElementById('payment-form');
+      paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
 
-        grecaptcha.execute('6LfS9hIqAAAAAMAXSRgstbAocF-tnTRxCkYjftzu', {action: 'submit'}).then(function(token) {
-          const lahza = new LahzaPopup();
-          lahza.newTransaction({
-            key: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM',  // Replace with your actual test API key
-            email: document.getElementById('email').value,
-            amount: document.getElementById('amount').value * 100,  // Amount in cents
-            currency: 'USD',
-            onSuccess: function(transaction) {
-              alert('Payment complete: ' + transaction.reference);
+        const response = grecaptcha.getResponse();
+        if (response.length === 0) {
+          alert("Please complete the reCAPTCHA.");
+          return;
+        }
 
-              // Send data to Google Form only after successful payment
-              const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdteC9tIOLelzwJcHfA6u_f-TA46FjHyhR2C0JkIVLGpz0TxQ/formResponse";
-              const data = {
-                "entry.375134448": document.getElementById('name').value,
-                "entry.1206714017": document.getElementById('email').value,
-                "entry.1909668310": document.getElementById('amount').value,
-                "entry.477402436": document.getElementById('country').value,
-                "entry.RECAPTCHA_ENTRY_ID": token  // Add a hidden field for reCAPTCHA token if needed
-              };
+        const lahza = new LahzaPopup();
+        lahza.newTransaction({
+          key: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM',  // Replace with your actual test API key
+          email: document.getElementById('email').value,
+          amount: document.getElementById('amount').value * 100,  // Amount in cents
+          currency: 'USD',
+          onSuccess: function(transaction) {
+            alert('Payment complete: ' + transaction.reference);
 
-              const params = new URLSearchParams(data).toString();
-
-              fetch(formUrl + "?" + params, {
-                method: 'POST',
-                mode: 'no-cors'
-              }).catch(function(error) {
-                console.error('Error:', error);
-              });
-            },
-            onCancel: function() {
-              alert('Payment cancelled.');
-            }
-          });
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+            // Send data to Google Form only after successful payment
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdteC9tIOLelzwJcHfA6u_f-TA46FjHyhR2C0JkIVLGpz0
