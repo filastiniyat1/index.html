@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Donation Form</title>
   <script src="https://js.lahza.io/inline.min.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -71,6 +72,7 @@
         <label for="country">Country:</label>
         <input type="text" id="country" required placeholder="Country">
       </div>
+      <div class="g-recaptcha" data-sitekey="6LfS9hIqAAAAAMAXSRgstbAocF-tnTRxCkYjftzu"></div>
       <div class="form-submit">
         <button type="submit">Donate</button>
       </div>
@@ -82,6 +84,12 @@
       const paymentForm = document.getElementById('payment-form');
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
+
+        const response = grecaptcha.getResponse();
+        if (response.length === 0) {
+          alert("Please complete the reCAPTCHA.");
+          return;
+        }
 
         const lahza = new LahzaPopup();
         lahza.newTransaction({
@@ -98,7 +106,8 @@
               "entry.375134448": document.getElementById('name').value,
               "entry.1206714017": document.getElementById('email').value,
               "entry.1909668310": document.getElementById('amount').value,
-              "entry.477402436": document.getElementById('country').value
+              "entry.477402436": document.getElementById('country').value,
+              "entry.RECAPTCHA_ENTRY_ID": response  // Add a hidden field for reCAPTCHA response if needed
             };
 
             const params = new URLSearchParams(data).toString();
