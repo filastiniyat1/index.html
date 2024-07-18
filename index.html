@@ -22,6 +22,8 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: left;
+      width: 100%;
+      max-width: 400px;
     }
     .form-group {
       margin-bottom: 15px;
@@ -37,6 +39,9 @@
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
+    }
+    .form-group input:invalid {
+      border-color: red;
     }
     .form-submit {
       text-align: center;
@@ -69,24 +74,24 @@
 </head>
 <body>
   <div class="form-container">
-    <form id="payment-form">
+    <form id="payment-form" novalidate>
       <div class="form-group">
         <label for="name">Name:</label>
-        <input type="text" id="name" required placeholder="Name">
+        <input type="text" id="name" required placeholder="John Doe" aria-label="Name">
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" id="email" required placeholder="Email">
+        <input type="email" id="email" required placeholder="john.doe@example.com" aria-label="Email">
       </div>
       <div class="form-group">
         <label for="amount">Donation Amount (USD):</label>
-        <input type="number" id="amount" required placeholder="Amount">
+        <input type="number" id="amount" required placeholder="50" aria-label="Donation Amount">
       </div>
       <div class="form-group">
         <label for="country">Country:</label>
-        <input type="text" id="country" required placeholder="Country">
+        <input type="text" id="country" required placeholder="USA" aria-label="Country">
       </div>
-      <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ"></div>
+      <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ" aria-label="reCAPTCHA"></div>
       <div class="form-submit">
         <button type="submit">Donate</button>
       </div>
@@ -105,6 +110,11 @@
 
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
+
+        if (!paymentForm.checkValidity()) {
+          paymentForm.reportValidity();
+          return;
+        }
 
         const response = grecaptcha.getResponse();
         if (response.length === 0) {
