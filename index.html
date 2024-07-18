@@ -123,19 +123,4 @@
 
             const params = new URLSearchParams(data).toString();
 
-            fetch(formUrl + "?" + params, {
-              method: 'POST',
-              mode: 'no-cors'
-            }).catch(function(error) {
-              console.error('Error:', error);
-            });
-          },
-          onCancel: function() {
-            alert('Payment cancelled.');
-          }
-        });
-      });
-    });
-  </script>
-</body>
-</html>
+      
