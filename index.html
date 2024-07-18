@@ -21,6 +21,7 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
     }
     .form-group {
       margin-bottom: 15px;
@@ -57,6 +58,12 @@
       margin-top: 10px;
       text-align: center;
     }
+    .thank-you-message {
+      display: none;
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
   </style>
 </head>
 <body>
@@ -84,12 +91,16 @@
       </div>
       <div class="error-message" id="recaptcha-error">Please complete the reCAPTCHA.</div>
     </form>
+    <div class="thank-you-message" id="thank-you-message">
+      Thank you for your donation!
+    </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const paymentForm = document.getElementById('payment-form');
       const recaptchaError = document.getElementById('recaptcha-error');
+      const thankYouMessage = document.getElementById('thank-you-message');
 
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
@@ -128,8 +139,9 @@
               console.error('Error:', error);
             });
 
-            // Redirect to Thank You page
-            window.location.href = 'https://www.filastiniyat.org/TnakYou';
+            // Display Thank You message
+            thankYouMessage.style.display = 'block';
+            paymentForm.style.display = 'none';
           },
           onCancel: function() {
             alert('Payment cancelled.');
