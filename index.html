@@ -24,40 +24,37 @@
       text-align: left;
       width: 100%;
       max-width: 400px;
+      box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
     }
     .form-group {
       margin-bottom: 15px;
-      position: relative;
+      position: relative; /* Add relative positioning to form group */
     }
     .form-group label {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
-      text-align: left;
+      text-align: left; /* Align labels to the left */
     }
     .form-group input, .form-group select {
-      width: calc(100% - 20px);
+      width: 100%; /* Make inputs full width */
       padding: 10px;
-      margin: 0 auto;
-      display: block;
       border: 1px solid #ccc;
       border-radius: 4px;
+      margin: 0 auto; /* Center align the input fields */
+      display: block;
+      box-sizing: border-box; /* Include padding in width calculation */
     }
-    .form-group input:invalid:focus, .form-group select:invalid:focus {
-      border-color: red;
+    .form-group input.amount-input {
+      padding-left: 30px; /* Add padding to make space for the currency symbol */
     }
-    .input-group {
-      display: flex;
-      align-items: center;
-    }
-    .input-group span {
-      background-color: #ccc;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px 0 0 4px;
-    }
-    .input-group input {
-      border-radius: 0 4px 4px 0;
+    .currency-symbol {
+      position: absolute;
+      top: 36px; /* Adjust top position as needed */
+      left: 12px;
+      font-size: 16px; /* Adjust font size */
+      color: #888;
+      pointer-events: none; /* Ensure it doesn't block input clicks */
     }
     .form-submit {
       text-align: center;
@@ -70,6 +67,9 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 16px;
+      width: 90%; /* Reduce width slightly to create padding */
+      display: block;
+      margin: 0 auto; /* Center align the button */
     }
     .form-submit button:hover {
       background-color: #0056b3;
@@ -85,41 +85,12 @@
       margin-top: 20px;
       font-size: 18px;
       color: green;
+      text-align: center;
     }
     .g-recaptcha {
       display: flex;
       justify-content: center;
-      margin: 10px auto;
-    }
-    .country-search {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 0 auto;
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    #country-options {
-      display: none;
-      position: absolute;
-      z-index: 1;
-      background-color: white;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      width: calc(100% - 40px);
-      top: 100%;
-      left: 10px;
-      right: 10px;
-      font-size: 14px;
-    }
-    #country-options div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    #country-options div:hover {
-      background-color: #eee;
+      margin-bottom: 15px; /* Add margin below reCAPTCHA */
     }
   </style>
 </head>
@@ -136,23 +107,27 @@
       </div>
       <div class="form-group">
         <label for="amount">Donation Amount (USD):</label>
-        <div class="input-group">
-          <span>$</span>
-          <input type="number" id="amount" required placeholder="250" aria-label="Donation Amount">
-        </div>
+        <span class="currency-symbol">$</span>
+        <input type="number" id="amount" class="amount-input" required placeholder="48" aria-label="Donation Amount">
       </div>
       <div class="form-group">
-        <label for="country-search">Country:</label>
-        <input type="text" id="country-search" placeholder="Search country" aria-label="Country" autocomplete="off">
-        <div id="country-options" aria-label="Country Options">
-          <div data-value="Palestine">Palestine</div>
-          <div data-value="USA">USA</div>
-          <div data-value="Canada">Canada</div>
-          <div data-value="UK">UK</div>
-          <div data-value="Australia">Australia</div>
-          <!-- Add more options as needed -->
-        </div>
-        <input type="hidden" id="country" required>
+        <label for="country">Country:</label>
+        <select id="country" required aria-label="Country">
+          <option value="" disabled selected>Select your country</option>
+          <option value="Palestine">Palestine</option>
+          <option value="Jordan">Jordan</option>
+          <option value="Lebanon">Lebanon</option>
+          <option value="Egypt">Egypt</option>
+          <option value="Syria">Syria</option>
+          <option value="Iraq">Iraq</option>
+          <option value="Saudi Arabia">Saudi Arabia</option>
+          <option value="United Arab Emirates">United Arab Emirates</option>
+          <option value="Qatar">Qatar</option>
+          <option value="Kuwait">Kuwait</option>
+          <option value="Bahrain">Bahrain</option>
+          <option value="Oman">Oman</option>
+          <option value="Yemen">Yemen</option>
+        </select>
       </div>
       <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ" aria-label="reCAPTCHA"></div>
       <div class="form-submit">
@@ -170,40 +145,6 @@
       const paymentForm = document.getElementById('payment-form');
       const recaptchaError = document.getElementById('recaptcha-error');
       const thankYouMessage = document.getElementById('thank-you-message');
-      const countrySearch = document.getElementById('country-search');
-      const countryOptions = document.getElementById('country-options');
-      const countryInput = document.getElementById('country');
-
-      countrySearch.addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const options = countryOptions.querySelectorAll('div');
-        options.forEach(option => {
-          if (option.textContent.toLowerCase().includes(filter)) {
-            option.style.display = '';
-          } else {
-            option.style.display = 'none';
-          }
-        });
-        countryOptions.style.display = 'block';
-      });
-
-      countryOptions.addEventListener('click', function(event) {
-        if (event.target.matches('div')) {
-          countrySearch.value = event.target.textContent;
-          countryInput.value = event.target.getAttribute('data-value');
-          countryOptions.style.display = 'none';
-        }
-      });
-
-      document.addEventListener('click', function(event) {
-        if (!countrySearch.contains(event.target) && !countryOptions.contains(event.target)) {
-          countryOptions.style.display = 'none';
-        }
-      });
-
-      paymentForm.addEventListener("input", function() {
-        this.checkValidity();
-      });
 
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
