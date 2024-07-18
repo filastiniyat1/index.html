@@ -51,6 +51,12 @@
     .form-submit button:hover {
       background-color: #0056b3;
     }
+    .error-message {
+      color: red;
+      display: none;
+      margin-top: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -76,19 +82,24 @@
       <div class="form-submit">
         <button type="submit">Donate</button>
       </div>
+      <div class="error-message" id="recaptcha-error">Please complete the reCAPTCHA.</div>
     </form>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const paymentForm = document.getElementById('payment-form');
+      const recaptchaError = document.getElementById('recaptcha-error');
+
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
 
         const response = grecaptcha.getResponse();
         if (response.length === 0) {
-          alert("Please complete the reCAPTCHA.");
+          recaptchaError.style.display = 'block';
           return;
+        } else {
+          recaptchaError.style.display = 'none';
         }
 
         const lahza = new LahzaPopup();
