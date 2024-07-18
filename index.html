@@ -188,7 +188,10 @@
               console.error('Error:', error);
             });
 
-            // Display Thank You message
+            // Display Thank You message with donor's name and amount
+            const name = document.getElementById('name').value;
+            const amount = document.getElementById('amount').value;
+            thankYouMessage.innerHTML = `Thank you, ${name}, for your generous donation of $${amount}!`;
             thankYouMessage.style.display = 'block';
             paymentForm.style.display = 'none';
           },
