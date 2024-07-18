@@ -40,7 +40,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .form-group input:invalid {
+    .form-group input:invalid:focus {
       border-color: red;
     }
     .form-submit {
@@ -65,101 +65,3 @@
       text-align: center;
     }
     .thank-you-message {
-      display: none;
-      margin-top: 20px;
-      font-size: 18px;
-      color: green;
-    }
-  </style>
-</head>
-<body>
-  <div class="form-container">
-    <form id="payment-form" novalidate>
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required placeholder="Shireen Nasri" aria-label="Name">
-      </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required placeholder="Shireen.Nasri@example.com" aria-label="Email">
-      </div>
-      <div class="form-group">
-        <label for="amount">Donation Amount (USD):</label>
-        <input type="number" id="amount" required placeholder="48" aria-label="Donation Amount">
-      </div>
-      <div class="form-group">
-        <label for="country">Country:</label>
-        <input type="text" id="country" required placeholder="Palestine" aria-label="Country">
-      </div>
-      <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ" aria-label="reCAPTCHA"></div>
-      <div class="form-submit">
-        <button type="submit">Donate</button>
-      </div>
-      <div class="error-message" id="recaptcha-error">Please complete the reCAPTCHA.</div>
-    </form>
-    <div class="thank-you-message" id="thank-you-message">
-      Thank you for your donation!
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const paymentForm = document.getElementById('payment-form');
-      const recaptchaError = document.getElementById('recaptcha-error');
-      const thankYouMessage = document.getElementById('thank-you-message');
-
-      paymentForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        if (!paymentForm.checkValidity()) {
-          paymentForm.reportValidity();
-          return;
-        }
-
-        const response = grecaptcha.getResponse();
-        if (response.length === 0) {
-          recaptchaError.style.display = 'block';
-          recaptchaError.textContent = 'Please complete the reCAPTCHA.';
-          return;
-        } else {
-          recaptchaError.style.display = 'none';
-        }
-
-        const lahza = new LahzaPopup();
-        lahza.newTransaction({
-          key: 'pk_test_xwUWFisPhQaemYwgAdmx1d1SdyafBqLIM',  // Replace with your actual test API key
-          email: document.getElementById('email').value,
-          amount: document.getElementById('amount').value * 100,  // Amount in cents
-          currency: 'USD',
-          onSuccess: function(transaction) {
-            // Send data to Google Form only after successful payment
-            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdteC9tIOLelzwJcHfA6u_f-TA46FjHyhR2C0JkIVLGpz0TxQ/formResponse";
-            const data = {
-              "entry.375134448": document.getElementById('name').value,
-              "entry.1206714017": document.getElementById('email').value,
-              "entry.1909668310": document.getElementById('amount').value,
-              "entry.477402436": document.getElementById('country').value
-            };
-
-            const params = new URLSearchParams(data).toString();
-
-            fetch(formUrl + "?" + params, {
-              method: 'POST',
-              mode: 'no-cors'
-            }).catch(function(error) {
-              console.error('Error:', error);
-            });
-
-            // Display Thank You message
-            thankYouMessage.style.display = 'block';
-            paymentForm.style.display = 'none';
-          },
-          onCancel: function() {
-            alert('Payment cancelled.');
-          }
-        });
-      });
-    });
-  </script>
-</body>
-</html>
