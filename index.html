@@ -27,6 +27,7 @@
     }
     .form-group {
       margin-bottom: 15px;
+      position: relative;
     }
     .form-group label {
       display: block;
@@ -42,8 +43,21 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .form-group input:invalid, .form-group select:invalid {
+    .form-group input:invalid:focus, .form-group select:invalid:focus {
       border-color: red;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+    }
+    .input-group span {
+      background-color: #ccc;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px 0 0 4px;
+    }
+    .input-group input {
+      border-radius: 0 4px 4px 0;
     }
     .form-submit {
       text-align: center;
@@ -77,6 +91,32 @@
       justify-content: center;
       margin: 10px auto;
     }
+    .country-search {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 0 auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    #country-options {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      background-color: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      width: calc(100% - 20px);
+    }
+    #country-options div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    #country-options div:hover {
+      background-color: #eee;
+    }
   </style>
 </head>
 <body>
@@ -92,19 +132,23 @@
       </div>
       <div class="form-group">
         <label for="amount">Donation Amount (USD):</label>
-        <input type="number" id="amount" required placeholder="250" aria-label="Donation Amount">
+        <div class="input-group">
+          <span>$</span>
+          <input type="number" id="amount" required placeholder="250" aria-label="Donation Amount">
+        </div>
       </div>
       <div class="form-group">
-        <label for="country">Country:</label>
-        <select id="country" required aria-label="Country">
-          <option value="">Select your country</option>
-          <option value="Palestine">Palestine</option>
-          <option value="USA">USA</option>
-          <option value="Canada">Canada</option>
-          <option value="UK">UK</option>
-          <option value="Australia">Australia</option>
+        <label for="country-search">Country:</label>
+        <input type="text" id="country-search" placeholder="Search country" aria-label="Country">
+        <div id="country-options" aria-label="Country Options">
+          <div data-value="Palestine">Palestine</div>
+          <div data-value="USA">USA</div>
+          <div data-value="Canada">Canada</div>
+          <div data-value="UK">UK</div>
+          <div data-value="Australia">Australia</div>
           <!-- Add more options as needed -->
-        </select>
+        </div>
+        <input type="hidden" id="country" required>
       </div>
       <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ" aria-label="reCAPTCHA"></div>
       <div class="form-submit">
@@ -122,6 +166,39 @@
       const paymentForm = document.getElementById('payment-form');
       const recaptchaError = document.getElementById('recaptcha-error');
       const thankYouMessage = document.getElementById('thank-you-message');
+      const countrySearch = document.getElementById('country-search');
+      const countryOptions = document.getElementById('country-options');
+      const countryInput = document.getElementById('country');
+
+      countrySearch.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const options = countryOptions.querySelectorAll('div');
+        options.forEach(option => {
+          if (option.textContent.toLowerCase().includes(filter)) {
+            option.style.display = '';
+          } else {
+            option.style.display = 'none';
+          }
+        });
+      });
+
+      countryOptions.addEventListener('click', function(event) {
+        if (event.target.matches('div')) {
+          countrySearch.value = event.target.textContent;
+          countryInput.value = event.target.getAttribute('data-value');
+          countryOptions.style.display = 'none';
+        }
+      });
+
+      countrySearch.addEventListener('focus', function() {
+        countryOptions.style.display = 'block';
+      });
+
+      document.addEventListener('click', function(event) {
+        if (!countrySearch.contains(event.target) && !countryOptions.contains(event.target)) {
+          countryOptions.style.display = 'none';
+        }
+      });
 
       paymentForm.addEventListener("input", function() {
         this.checkValidity();
