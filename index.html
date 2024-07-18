@@ -35,12 +35,14 @@
       text-align: left;
     }
     .form-group input, .form-group select {
-      width: 100%;
+      width: calc(100% - 20px);
       padding: 10px;
+      margin: 0 auto;
+      display: block;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .form-group input:invalid:focus {
+    .form-group input:invalid, .form-group select:invalid {
       border-color: red;
     }
     .form-submit {
@@ -73,6 +75,7 @@
     .g-recaptcha {
       display: flex;
       justify-content: center;
+      margin: 10px auto;
     }
   </style>
 </head>
@@ -93,7 +96,15 @@
       </div>
       <div class="form-group">
         <label for="country">Country:</label>
-        <input type="text" id="country" required placeholder="Palestine" aria-label="Country">
+        <select id="country" required aria-label="Country">
+          <option value="">Select your country</option>
+          <option value="Palestine">Palestine</option>
+          <option value="USA">USA</option>
+          <option value="Canada">Canada</option>
+          <option value="UK">UK</option>
+          <option value="Australia">Australia</option>
+          <!-- Add more options as needed -->
+        </select>
       </div>
       <div class="g-recaptcha" data-sitekey="6LfuABMqAAAAAHQPBHkMpJUnI5hX546lBdxuXtqQ" aria-label="reCAPTCHA"></div>
       <div class="form-submit">
@@ -111,6 +122,10 @@
       const paymentForm = document.getElementById('payment-form');
       const recaptchaError = document.getElementById('recaptcha-error');
       const thankYouMessage = document.getElementById('thank-you-message');
+
+      paymentForm.addEventListener("input", function() {
+        this.checkValidity();
+      });
 
       paymentForm.addEventListener("submit", function(e) {
         e.preventDefault();
